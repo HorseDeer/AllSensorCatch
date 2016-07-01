@@ -2,6 +2,7 @@ package com.example.admin.allsensorcatch;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -9,22 +10,26 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 
 public class SensorList extends AppCompatActivity implements SensorEventListener, Serializable {
     private SensorManager sm2;
-    private TextView data;
+    private TextView type,x,y,z;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sensorlayout);
-        data = (TextView)findViewById(R.id.sensorData);
+        type = (TextView)findViewById(R.id.sensorData);
+        x = (TextView)findViewById(R.id.xdata);
+        x.setTextColor(Color.RED);
+        y = (TextView)findViewById(R.id.ydata);
+        y.setTextColor(Color.GREEN);
+        z = (TextView)findViewById(R.id.zdata);
+        z.setTextColor(Color.BLUE);
         sm2 = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
     }
 
@@ -33,10 +38,10 @@ public class SensorList extends AppCompatActivity implements SensorEventListener
         // TODO Auto-generated method stub
         super.onResume();
         Intent intent = getIntent();
-        String type = intent.getStringExtra("SensorType");
+        String setType = intent.getStringExtra("SensorType");
         List<Sensor> sensors = sm2.getSensorList(Sensor.TYPE_ALL);
         for(Sensor s : sensors) {
-            if (s.getName().equals(type)) {
+            if (s.getName().equals(setType)) {
                 sm2.registerListener(this,s,SensorManager.SENSOR_DELAY_UI);
             }
         }
@@ -50,13 +55,17 @@ public class SensorList extends AppCompatActivity implements SensorEventListener
         }
     }
     @Override
+    protected void onStop() {
+        super.onStop();
+        sm2.unregisterListener(this);
+    }
+    @Override
     public void onSensorChanged(SensorEvent event) {
-        String result = "";
-        result += event.sensor.getName() + "\n\n";
-        result += event.values[0] + "\n";
-        result += event.values[1] + "\n";
-        result += event.values[2] + "\n";
-        data.setText(result);
+        type.setText(event.sensor.getName());
+        x.setText("X座標・・・  "+event.values[0]);
+        y.setText("Y座標・・・  "+event.values[1]);
+        z.setText("Z座標・・・  "+event.values[2]);
+
     }
 
     @Override

@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.Serializable;
@@ -23,6 +24,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private SensorManager sm;
     private ArrayList<String> sensorType = new ArrayList<String>();
     private ListView listView;
+    private TextView number;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,24 +34,25 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         sm = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
         listView = (ListView)findViewById(R.id.namelist);
         listView.setOnItemClickListener(this);
+        number = (TextView)findViewById(R.id.typeNumber);
     }
 
     @Override
     protected void onResume() {
         // TODO Auto-generated method stub
         super.onResume();
+        int n = 0;
         //全ての種類のセンサーを取得する
         List<Sensor> sensors = sm.getSensorList(Sensor.TYPE_ALL);
        for(Sensor s : sensors) {
            //String型のArrayListに追加していく
            sensorType.add(s.getName());
+           n++;
         }
-        /*for(int i = 0; i < 100; i++) {
-            sensorType.add("✌('ω'✌ )三✌('ω')✌三( ✌'ω')✌ "+(i+1));
-        }*/
         //ListViewにアダプターを設定する
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, sensorType);
         listView.setAdapter(adapter);
+        number.setText("センサーの種類数・・・  "+n);
     }
 
     @Override
@@ -59,6 +62,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             sm.unregisterListener(this);
         }
         sensorType.clear();
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        sm.unregisterListener(this);
     }
 
     @Override
@@ -76,7 +84,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         ListView clickList = (ListView) parent;
         Intent intent = new Intent(MainActivity.this, SensorList.class);
         intent.putExtra("SensorType", (String)clickList.getItemAtPosition(position));
-        //Toast.makeText(getApplicationContext(), intent.getStringExtra("SensorType"),Toast.LENGTH_LONG).show();
         startActivity(intent);
     }
 }
