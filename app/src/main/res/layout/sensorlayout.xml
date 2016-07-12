@@ -34,4 +34,18 @@
         android:text="Z座標・・・"
         android:id="@+id/zdata"
         android:layout_gravity="center_horizontal" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="STOP"
+        android:id="@+id/SorG"
+        android:layout_gravity="center_horizontal"
+        android:onClick="stopAndGO"
+        android:longClickable="false" />
+
+    <com.example.admin.allsensorcatch.GraphView
+        android:id="@+id/graph_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 </LinearLayout>

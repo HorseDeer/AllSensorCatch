@@ -9,6 +9,8 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.io.Serializable;
@@ -18,6 +20,9 @@ import java.util.List;
 public class SensorList extends AppCompatActivity implements SensorEventListener, Serializable {
     private SensorManager sm2;
     private TextView type,x,y,z;
+    private boolean sg = true;
+    private Button StopGo;
+    private GraphView graphView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +36,8 @@ public class SensorList extends AppCompatActivity implements SensorEventListener
         z = (TextView)findViewById(R.id.zdata);
         z.setTextColor(Color.BLUE);
         sm2 = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
+        StopGo = (Button)findViewById(R.id.SorG);
+        graphView = (GraphView)findViewById(R.id.graph_view);
     }
 
     @Override
@@ -61,15 +68,32 @@ public class SensorList extends AppCompatActivity implements SensorEventListener
     }
     @Override
     public void onSensorChanged(SensorEvent event) {
-        type.setText(event.sensor.getName());
-        x.setText("X座標・・・  "+event.values[0]);
-        y.setText("Y座標・・・  "+event.values[1]);
-        z.setText("Z座標・・・  "+event.values[2]);
-
+        if (sg) {
+            float[] data = new float[3];
+            type.setText(event.sensor.getName());
+            x.setText("X座標・・・  " + event.values[0]);
+            y.setText("Y座標・・・  " + event.values[1]);
+            z.setText("Z座標・・・  " + event.values[2]);
+            data[0] = event.values[0];
+            data[1] = event.values[1];
+            data[2] = event.values[2];
+            graphView.change(data);
+        }
     }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
+    }
+
+    public void stopAndGO(View view) {
+        if (sg) {
+            sg = false;
+            StopGo.setText("GO");
+        }
+        else {
+            sg = true;
+            StopGo.setText("STOP");
+        }
     }
 }
